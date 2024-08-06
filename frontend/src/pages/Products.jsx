@@ -72,7 +72,7 @@ const Products = () => {
         <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
 
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md flex flex-col justify-between gap-3">
-                <span className='cursor-pointer ' onClick={handleLogout}>Logout</span>
+                <span className='cursor-pointer hover:bg-gray-200 hover:font-semibold w-max px-2' onClick={handleLogout}>Logout</span>
                 <h2 className="text-2xl font-bold mb-6 text-center">Submit Your Details</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div>
