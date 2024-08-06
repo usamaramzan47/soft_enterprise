@@ -1,6 +1,6 @@
 const express = require('express');
 const authRoutes = require('./routes/auth');
-// const productRoutes = require('./routes/products');
+const productRoutes = require('./routes/products');
 const connectDB = require('./config/db');
 const cors = require('cors');
 
@@ -15,7 +15,7 @@ connectDB();
 
 // routes redirect
 app.use('/auth', authRoutes);
-// app.use('/products', productRoutes);
+app.use('/products', productRoutes);
 
 
 app.listen(5000, () => {

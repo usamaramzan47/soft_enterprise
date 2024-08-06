@@ -15,11 +15,11 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
 
-        setTimeout(async() => {
+        setTimeout(async () => {
             try {
                 const res = await axios.post('http://localhost:5000/auth/login', { email, password });
                 localStorage.setItem('token', res.data.token); // Store the token
-                updateUser(res.data.token)
+                updateUser(res.data)
                 toast.success("successful Login!")
                 navigate('/products'); // Redirect to products page
             } catch (err) {
@@ -64,8 +64,9 @@ const Login = () => {
                         disabled={loading} // Disable button when loading is true
                         className={`w-full py-2 px-4 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     >
-                        {loading ? 'Logging in...' : 'Login'} {/* Change button text based on loading state */}
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
+
                 </form>
             </div>
         </div>

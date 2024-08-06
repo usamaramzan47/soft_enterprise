@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
+require('dotenv').config();
 
 // run once for create user with hash password
 
@@ -16,14 +16,26 @@ const User = require('../models/User');
 // });
 
 router.post('/login', async (req, res) => {
-  console.log('request comes in login api')
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(400).send('Invalid credentials');
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    // Check if the user exists and password matches
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(400).send('Invalid credentials');
+    }
+
+    // Generate a token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY); 
+
+    res.send({
+      token,
+      userId: user._id 
+    });
+  } catch (error) {
+    res.status(500).send('Server error');
   }
-  const token = jwt.sign({ userId: user._id }, 'secret_key');
-  res.send({ token });
 });
 
 module.exports = router;
