@@ -19,11 +19,14 @@ const Login = () => {
             try {
                 const res = await axios.post('http://localhost:5000/auth/login', { email, password });
                 localStorage.setItem('token', res.data.token); // Store the token
-                updateUser(res.data)
+                updateUser(res?.data)
                 toast.success("successful Login!")
                 navigate('/products'); // Redirect to products page
             } catch (err) {
-                toast.error(err.response.data)
+                if (!err.response)
+                    toast.error('Failed To Connect Server..')
+                else
+                    toast.error(err?.response?.data)
             } finally {
                 setLoading(false); // Set loading to false after response
             }

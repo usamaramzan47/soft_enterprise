@@ -41,17 +41,42 @@ const Products = () => {
     };
 
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length > 6) {
-            alert('You can only upload up to 6 images');
+
+        const newFiles = Array.from(e.target.files);
+        const combinedFiles = [...images, ...newFiles];
+
+        const oversizedFiles = combinedFiles.filter(file => file.size > 3 * 1024 * 1024); // 3MB in bytes
+        if (oversizedFiles.length > 0) {
+            alert('Each image must be smaller than 3MB');
             e.target.value = null; // Clear the file input
-            setImages(null)
-            setImagePreviews(null)
             return;
         }
-        setImages(files);
-        setImagePreviews(files.map(file => URL.createObjectURL(file)));
+
+        if (combinedFiles.length > 6) {
+            alert('You can only upload up to 6 images');
+            e.target.value = null; // Clear the file input
+            return;
+        }
+
+        setImages(combinedFiles);
+        setImagePreviews(combinedFiles.map(file => URL.createObjectURL(file)));
     };
+
+
+    const handleDeleteImage = (index) => {
+        const newImages = images.filter((_, i) => i !== index);
+        const newPreviews = imagePreviews.filter((_, i) => i !== index);
+        setImages(newImages);
+        setImagePreviews(newPreviews);
+
+        // Create a new DataTransfer object and append the remaining files
+        const dataTransfer = new DataTransfer();
+        newImages.forEach(file => dataTransfer.items.add(file));
+
+        // Update the file input with the new files
+        document.getElementById('pictures').files = dataTransfer.files;
+    };
+
 
     const handleClear = () => {
 
@@ -121,10 +146,15 @@ const Products = () => {
                             onChange={handleImageChange}
                             className="block w-full text-gray-500 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        {errors.pictures && <p className="text-red-500 text-sm">At least one picture is required</p>}
+                        {errors.pictures && <p className="text-red-500 text-sm">At least one picture is required & less then 3MB</p>}
                         <div className="mt-2 flex flex-wrap gap-2">
                             {imagePreviews?.map((preview, index) => (
-                                <img key={index} src={preview} alt={`Preview ${index}`} className="w-24 h-24 object-cover rounded-md shadow-sm" />
+                                <div key={index} className="relative w-24 h-24 group">
+                                    <img src={preview} alt={`Preview ${index}`} className="object-cover rounded-md shadow-sm w-full h-full" />
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out cursor-pointer" onClick={() => handleDeleteImage(index)}>
+                                        <img src="/images/icons/ic_delete.svg" alt="del icon" />
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </div>
@@ -144,8 +174,8 @@ const Products = () => {
                 </button>
 
                 <span className='text-[12px] text-center text-gray-400 tracking-widest'>powered by usama ramzan</span>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
